@@ -15,6 +15,7 @@
 #include <boost/beast/version.hpp>
 
 #include <boost/log/trivial.hpp>
+#include <boost/json.hpp>
 
 class updates_receiver
 {
@@ -35,8 +36,14 @@ class updates_receiver
     std::string method_;
     std::string target_;
 
+    bool is_offset = false;
+    std::int64_t offset_;
+
 private:
     void reset();
+    int calculate_offset(boost::json::array& updates);
+    std::string get_method() const;
+    std::string get_target() const;
 
 public:
     explicit updates_receiver(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context);
