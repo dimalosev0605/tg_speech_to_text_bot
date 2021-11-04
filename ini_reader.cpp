@@ -14,11 +14,11 @@ ini_reader::ini_reader(const std::string& ini_file_name)
     updates_method_ = pt_.get<std::string>(bot_section + "updates_method");
 
     BOOST_LOG_TRIVIAL(info) << "configuration file was read:"
-                            << " host = " << host_
-                            << " port = " << port_
-                            << " version = " << version_
-                            << " token = " << token_
-                            << " updates_method_ = " << updates_method_;
+                            << "\nhost = " << host_
+                            << "\nport = " << port_
+                            << "\nversion = " << version_
+                            << "\ntoken = " << token_
+                            << "\nupdates_method_ = " << updates_method_;
 }
 
 ini_reader& ini_reader::instance()

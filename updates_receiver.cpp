@@ -19,6 +19,7 @@ void updates_receiver::reset()
     request_ = std::make_unique<boost::beast::http::request<boost::beast::http::empty_body>>();
     response_ = std::make_unique<boost::beast::http::response<boost::beast::http::string_body>>();
     buffer_ = std::make_unique<boost::beast::flat_buffer>();
+    is_offset_ = false;
 }
 
 int updates_receiver::calculate_offset(boost::json::array& updates)
@@ -31,12 +32,13 @@ int updates_receiver::calculate_offset(boost::json::array& updates)
             max_update_id = update_id;
         }
     }
+    is_offset_ = true;
     return max_update_id + 1;
 }
 
 std::string updates_receiver::get_method() const
 {
-    if(is_offset) {
+    if(is_offset_) {
         return method_ + "?offset=" + std::to_string(offset_);
     }
     return method_;
@@ -149,7 +151,7 @@ void updates_receiver::on_read(boost::beast::error_code ec, std::size_t bytes_tr
         return;
     }
 
-    BOOST_LOG_TRIVIAL(info) << "\r\n" << *response_;
+    BOOST_LOG_TRIVIAL(info) << "\n" << *response_;
 //    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 //    std::cout << *response_ << std::endl;
 //    boost::beast::get_lowest_layer(stream_).expires_after(std::chrono::seconds(30));
@@ -161,12 +163,13 @@ void updates_receiver::on_read(boost::beast::error_code ec, std::size_t bytes_tr
     if(ok) {
         auto result = body_obj["result"].as_array();
         if(!result.empty()) {
+            queue_.push(result);
             offset_ = calculate_offset(result);
-            is_offset = true;
             BOOST_LOG_TRIVIAL(info) << "offset = " << offset_;
         }
+
     } else {
-        BOOST_LOG_TRIVIAL(warning) << "unsuccessful request, response =\r\n" << *response_;
+        BOOST_LOG_TRIVIAL(warning) << "unsuccessful request, response =\n" << *response_;
     }
 
     const auto connection = response_->base()["Connection"];

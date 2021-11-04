@@ -17,6 +17,8 @@
 #include <boost/log/trivial.hpp>
 #include <boost/json.hpp>
 
+#include "threadsafe_queue.h"
+
 class updates_receiver
 {
     boost::asio::io_context& io_context_;
@@ -36,8 +38,10 @@ class updates_receiver
     std::string method_;
     std::string target_;
 
-    bool is_offset = false;
+    bool is_offset_ = false;
     std::int64_t offset_;
+
+    threadsafe_queue queue_;
 
 private:
     void reset();
