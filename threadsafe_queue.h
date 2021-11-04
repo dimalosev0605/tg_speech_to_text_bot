@@ -14,7 +14,7 @@ class threadsafe_queue
     std::condition_variable cv_;
 
 public:
-    explicit threadsafe_queue() = default;
+    // implement or delete ctors
     void push(const boost::json::array& arr);
     boost::json::object wait_and_pop();
 };

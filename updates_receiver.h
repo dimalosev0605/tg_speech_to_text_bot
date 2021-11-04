@@ -18,6 +18,8 @@
 #include <boost/json.hpp>
 
 #include "threadsafe_queue.h"
+#include "updates_processor.h"
+#include "request_settings.h"
 
 class updates_receiver
 {
@@ -31,17 +33,15 @@ class updates_receiver
     std::unique_ptr<boost::beast::http::response<boost::beast::http::string_body>> response_;
     std::unique_ptr<boost::beast::flat_buffer> buffer_;
 
-    std::string host_;
-    std::string port_;
-    std::string token_;
-    int version_;
-    std::string method_;
+    const std::string method_ = "getUpdates";
+    request_settings request_settings_;
     std::string target_;
 
     bool is_offset_ = false;
     std::int64_t offset_;
 
     threadsafe_queue queue_;
+    std::vector<std::unique_ptr<updates_processor>> updates_processors_;
 
 private:
     void reset();
@@ -50,15 +50,10 @@ private:
     std::string get_target() const;
 
 public:
-    explicit updates_receiver(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context);
-
-    void set_host(const std::string& host);
-    void set_port(const std::string& port);
-    void set_token(const std::string& token);
-    void set_version(int version) noexcept;
-    void set_method(const std::string& method);
+    explicit updates_receiver(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context, const request_settings& request_settings);
 
     void run();
+    void start_processing_threads(int processing_thread_count);
 
     void on_resolve(boost::beast::error_code ec, boost::asio::ip::tcp::resolver::results_type results);
     void on_connect(boost::beast::error_code ec, boost::asio::ip::tcp::resolver::results_type::endpoint_type);

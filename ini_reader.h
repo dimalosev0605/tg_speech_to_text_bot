@@ -5,16 +5,13 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 
+#include "request_settings.h"
+
 class ini_reader
 {
     boost::property_tree::ptree pt_;
-
-    std::string host_;
-    std::string port_;
-    int version_;
-
-    std::string token_;
-    std::string updates_method_;
+    request_settings request_settings_;
+    int processing_threads_count_;
 
 private:
     explicit ini_reader(const std::string& ini_file_name);
@@ -28,12 +25,8 @@ public:
     ini_reader(ini_reader&&) = delete;
     ini_reader& operator=(ini_reader&&) = delete;
 
-    std::string get_host() const;
-    std::string get_port() const;
-    int get_version() const;
-
-    std::string get_token() const;
-    std::string get_updates_method() const;
+    int get_processing_threads_count() const noexcept;
+    request_settings get_request_settings() const;
 };
 
 #endif // INI_READER_H

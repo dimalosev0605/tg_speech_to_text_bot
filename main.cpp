@@ -14,15 +14,10 @@ int main(int argc, char** argv)
     load_root_certificates(ssl_context);
     ssl_context.set_verify_mode(boost::asio::ssl::verify_peer);
 
-    updates_receiver updates_receiver{io_context, ssl_context};
-    updates_receiver.set_host(ini_reader::instance().get_host());
-    updates_receiver.set_port(ini_reader::instance().get_port());
-    updates_receiver.set_version(ini_reader::instance().get_version());
-
-    updates_receiver.set_token(ini_reader::instance().get_token());
-    updates_receiver.set_method(ini_reader::instance().get_updates_method());
+    updates_receiver updates_receiver{io_context, ssl_context, ini_reader::instance().get_request_settings()};
 
     auto work = boost::asio::require(io_context.get_executor(), boost::asio::execution::outstanding_work.tracked);
+    updates_receiver.start_processing_threads(ini_reader::instance().get_processing_threads_count());
     updates_receiver.run();
     io_context.run();
 
