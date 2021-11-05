@@ -12,6 +12,7 @@ class ini_reader
     boost::property_tree::ptree pt_;
     request_settings request_settings_;
     int processing_threads_count_;
+    int io_context_threads_count_;
 
 private:
     explicit ini_reader(const std::string& ini_file_name);
@@ -26,6 +27,7 @@ public:
     ini_reader& operator=(ini_reader&&) = delete;
 
     int get_processing_threads_count() const noexcept;
+    int get_io_context_threads_count() const noexcept;
     request_settings get_request_settings() const;
 };
 

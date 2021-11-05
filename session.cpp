@@ -71,17 +71,14 @@ void session::on_read(boost::beast::error_code ec, std::size_t bytes_transferred
         BOOST_LOG_TRIVIAL(error) << ec.message() << std::endl;
         return;
     }
-    BOOST_LOG_TRIVIAL(info) << "response:\n" << response_;
     stream_.async_shutdown(boost::beast::bind_front_handler(&session::on_shutdown, shared_from_this()));
 }
 
 void session::on_shutdown(boost::beast::error_code ec)
 {
-    if(ec) {
+    if(ec && ec != boost::asio::ssl::error::stream_truncated) {
         BOOST_LOG_TRIVIAL(error) << ec.message() << std::endl;
         return;
-    } else {
-        BOOST_LOG_TRIVIAL(info) << "success shutdown";
     }
 }
 

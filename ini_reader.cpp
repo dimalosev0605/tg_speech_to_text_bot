@@ -14,13 +14,15 @@ ini_reader::ini_reader(const std::string& ini_file_name)
 
     const std::string configuration_section = "Configuration.";
     processing_threads_count_ = pt_.get<int>(configuration_section + "processing_threads_count");
+    io_context_threads_count_ = pt_.get<int>(configuration_section + "io_context_threads_count");
 
     BOOST_LOG_TRIVIAL(info) << "configuration file was read:"
                             << "\nhost = " << request_settings_.host_
                             << "\nport = " << request_settings_.port_
                             << "\nversion = " << request_settings_.version_
                             << "\ntoken = " << request_settings_.token_
-                            << "\nprocessing_threads_count_ = " << processing_threads_count_;
+                            << "\nprocessing_threads_count = " << processing_threads_count_
+                            << "\nio_context_threads_count = " << io_context_threads_count_;
 }
 
 ini_reader& ini_reader::instance()
@@ -32,6 +34,11 @@ ini_reader& ini_reader::instance()
 int ini_reader::get_processing_threads_count() const noexcept
 {
     return processing_threads_count_;
+}
+
+int ini_reader::get_io_context_threads_count() const noexcept
+{
+    return io_context_threads_count_;
 }
 
 request_settings ini_reader::get_request_settings() const

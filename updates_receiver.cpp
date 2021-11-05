@@ -50,7 +50,7 @@ std::string updates_receiver::get_target() const
     return "/bot" + request_settings_.token_ + "/" + get_method();
 }
 
-void updates_receiver::start_processing_threads(int processing_thread_count)
+void updates_receiver::start_updates_processors(int processing_thread_count)
 {
     updates_processors_.reserve(processing_thread_count);
     for(int i = 0; i < processing_thread_count; ++i) {

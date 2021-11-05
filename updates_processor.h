@@ -19,8 +19,7 @@ class updates_processor
     boost::asio::ssl::context& ssl_context_;
     threadsafe_queue& queue_;
 
-    std::unique_ptr<std::thread> queue_extractor_thread_;
-    std::unique_ptr<std::thread> io_context_thread_;
+    std::unique_ptr<std::thread> thread_;
 
 private:
     void process_message(boost::json::object& message);

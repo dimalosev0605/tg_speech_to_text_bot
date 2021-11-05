@@ -8,18 +8,15 @@ updates_processor::updates_processor(boost::asio::io_context& io_context, boost:
 
 void updates_processor::run()
 {
-    io_context_thread_ = std::make_unique<std::thread>([this]{
-        io_context_.run();
-    });
-    queue_extractor_thread_ = std::make_unique<std::thread>([this]{
+    thread_ = std::make_unique<std::thread>([this]{
         while(true) {
             auto update_obj = queue_.wait_and_pop();
-            BOOST_LOG_TRIVIAL(info) << "update obj: " << update_obj;
             if(update_obj.contains("message")) {
                 process_message(update_obj["message"].as_object());
             }
         }
     });
+    // join?
 }
 
 void updates_processor::process_message(boost::json::object& message)

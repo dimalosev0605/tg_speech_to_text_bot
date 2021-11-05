@@ -53,7 +53,7 @@ public:
     explicit updates_receiver(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context, const request_settings& request_settings);
 
     void run();
-    void start_processing_threads(int processing_thread_count);
+    void start_updates_processors(int processing_thread_count);
 
     void on_resolve(boost::beast::error_code ec, boost::asio::ip::tcp::resolver::results_type results);
     void on_connect(boost::beast::error_code ec, boost::asio::ip::tcp::resolver::results_type::endpoint_type);
