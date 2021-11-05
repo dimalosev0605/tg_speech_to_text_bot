@@ -85,7 +85,6 @@ void updates_receiver::on_resolve(boost::beast::error_code ec, boost::asio::ip::
         run();
         return;
     }
-//    boost::beast::get_lowest_layer(stream_).expires_after(std::chrono::seconds(30));
     boost::beast::get_lowest_layer(*stream_).async_connect(results, boost::beast::bind_front_handler(&updates_receiver::on_connect, this));
 }
 
@@ -109,7 +108,6 @@ void updates_receiver::on_handshake(boost::beast::error_code ec)
         run();
         return;
     }
-//    boost::beast::get_lowest_layer(stream_).expires_after(std::chrono::seconds(30));
     boost::beast::http::async_write(*stream_, *request_, boost::beast::bind_front_handler(&updates_receiver::on_write, this));
 }
 
@@ -122,7 +120,6 @@ void updates_receiver::on_write(boost::beast::error_code ec, std::size_t bytes_t
         run();
         return;
     }
-
     boost::beast::http::async_read(*stream_, *buffer_, *response_, boost::beast::bind_front_handler(&updates_receiver::on_read, this));
 }
 
@@ -135,12 +132,6 @@ void updates_receiver::on_read(boost::beast::error_code ec, std::size_t bytes_tr
         run();
         return;
     }
-
-//    BOOST_LOG_TRIVIAL(info) << "\n" << *response_;
-//    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-//    std::cout << *response_ << std::endl;
-//    boost::beast::get_lowest_layer(stream_).expires_after(std::chrono::seconds(30));
-//    calculate offset, push updates to queue, clear buffers, check for closing connection.
 
     auto body_obj = boost::json::parse(response_->body().data()).as_object();
 

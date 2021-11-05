@@ -78,7 +78,6 @@ void session::on_shutdown(boost::beast::error_code ec)
 {
     if(ec && ec != boost::asio::ssl::error::stream_truncated) {
         BOOST_LOG_TRIVIAL(error) << ec.message() << std::endl;
-        return;
     }
 }
 
@@ -86,9 +85,3 @@ std::string session::get_target() const
 {
     return "/bot" + request_settings_.token_ + "/" + method_;
 }
-
-session::~session()
-{
-    BOOST_LOG_TRIVIAL(info) << this << " destroyed";
-}
-

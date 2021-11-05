@@ -35,7 +35,6 @@ public:
     explicit session(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context,
                      const request_settings& request_settings, const std::string& method);
     void run();
-    ~session();
 };
 
 #endif // SESSION_H
