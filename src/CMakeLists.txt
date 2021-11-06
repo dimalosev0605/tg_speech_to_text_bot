@@ -1,0 +1,2 @@
+add_executable(echo_bot main.cpp updates_receiver.h updates_receiver.cpp logger.h logger.cpp ini_reader.h ini_reader.cpp threadsafe_queue.h threadsafe_queue.cpp updates_processor.h updates_processor.cpp session.h session.cpp request_settings.h request_settings.cpp)
+target_link_libraries(echo_bot "-lcrypto" "-lssl" ${Boost_LOG_SETUP_LIBRARY} ${Boost_LOG_LIBRARY})

@@ -8,7 +8,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBOOST_LOG_DYN_LINK")
 
-find_package(Boost 1.77 REQUIRED COMPONENTS log log_setup REQUIRED)
+find_package(Boost 1.77 REQUIRED COMPONENTS log_setup log thread REQUIRED)
 
-add_executable(${PROJECT_NAME} main.cpp updates_receiver.h updates_receiver.cpp logger.h logger.cpp ini_reader.h ini_reader.cpp threadsafe_queue.h threadsafe_queue.cpp updates_processor.h updates_processor.cpp session.h session.cpp request_settings.h request_settings.cpp)
-target_link_libraries(${PROJECT_NAME} "-pthread" "-lcrypto" "-lssl" "-lboost_log" "-lboost_log_setup" "-lboost_thread")
+include(GNUInstallDirs)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY
+${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY
+${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
+${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
+
+add_subdirectory(src)
