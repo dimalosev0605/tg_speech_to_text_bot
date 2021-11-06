@@ -9,6 +9,8 @@
 
 #include <boost/log/trivial.hpp>
 
+#include <thread>
+
 #include "threadsafe_queue.h"
 #include "session.h"
 #include "ini_reader.h"
