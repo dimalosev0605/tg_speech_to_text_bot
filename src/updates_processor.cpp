@@ -6,6 +6,11 @@ updates_processor::updates_processor(boost::asio::io_context& io_context, boost:
       queue_{queue}
 {}
 
+updates_processor::~updates_processor()
+{
+    if(thread_) thread_->join();
+}
+
 void updates_processor::run()
 {
     thread_ = std::make_unique<std::thread>([this]{
@@ -16,7 +21,6 @@ void updates_processor::run()
             }
         }
     });
-    // join?
 }
 
 void updates_processor::process_message(boost::json::object& message)
