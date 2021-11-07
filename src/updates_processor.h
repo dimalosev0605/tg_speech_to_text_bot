@@ -28,8 +28,8 @@ private:
 
 public:
     explicit updates_processor(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context, threadsafe_queue& queue);
-    ~updates_processor();
     void run();
+    ~updates_processor();
 };
 
 #endif // UPDATES_PROCESSOR_H

@@ -18,3 +18,12 @@ boost::json::object threadsafe_queue::wait_and_pop()
     q_.pop();
     return obj;
 }
+
+void threadsafe_queue::push_stop_obj()
+{
+    boost::json::object stop_obj;
+    stop_obj["stop"] = true;
+    std::lock_guard<std::mutex> lock(m_);
+    q_.push(std::move(stop_obj));
+    cv_.notify_all();
+}

@@ -17,6 +17,7 @@ public:
     // implement or delete ctors
     void push(const boost::json::array& arr);
     boost::json::object wait_and_pop();
+    void push_stop_obj();
 };
 
 #endif // THREADSAFE_QUEUE_H

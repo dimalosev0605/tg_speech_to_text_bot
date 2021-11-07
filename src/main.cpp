@@ -21,7 +21,7 @@ int main(int argc, char** argv)
     updates_receiver.run();
 
     boost::asio::signal_set signals(io_context, SIGINT);
-    signals.async_wait([&](boost::beast::error_code const&, int){
+    signals.async_wait([&io_context](boost::beast::error_code const&, int){
         io_context.stop();
     });
 
