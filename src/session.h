@@ -8,18 +8,30 @@
 #include <boost/beast/version.hpp>
 
 #include <boost/log/trivial.hpp>
+#include <boost/json.hpp>
+#include <functional>
 
-#include "request_settings.h"
+#include "ini_reader.h"
+#include "threadsafe_queue.h"
+#include "callbacks.h"
+
+enum class service : int
+{
+    google,
+    telegram
+};
 
 class session : public std::enable_shared_from_this<session>
 {
     boost::asio::ip::tcp::resolver resolver_;
     boost::beast::ssl_stream<boost::beast::tcp_stream> stream_;
-    boost::beast::http::request<boost::beast::http::empty_body> request_;
+    boost::beast::http::request<boost::beast::http::string_body> request_;
     boost::beast::http::response<boost::beast::http::string_body> response_;
     boost::beast::flat_buffer buffer_;
-    request_settings request_settings_;
-    std::string method_;
+    threadsafe_queue& queue_;
+    std::string target_;
+    std::function<void (threadsafe_queue& queue, boost::beast::http::response<boost::beast::http::string_body>& response, boost::json::object chat_info)> callback_;
+    boost::json::object chat_info_;
 
 private:
     void on_resolve(boost::beast::error_code ec, boost::asio::ip::tcp::resolver::results_type results);
@@ -29,12 +41,12 @@ private:
     void on_read(boost::beast::error_code ec, std::size_t bytes_transferred);
     void on_shutdown(boost::beast::error_code ec);
 
-    std::string get_target() const;
-
 public:
-    explicit session(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context,
-                     const request_settings& request_settings, const std::string& method);
-    void run();
+    explicit session(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context, threadsafe_queue& queue,
+                     boost::beast::http::request<boost::beast::http::string_body> request,
+                     std::function<void (threadsafe_queue& queue, boost::beast::http::response<boost::beast::http::string_body>& response, boost::json::object chat_info)> callback = {},
+                     const boost::json::object& chat_info = {});
+    void run(service service);
 };
 
 #endif // SESSION_H

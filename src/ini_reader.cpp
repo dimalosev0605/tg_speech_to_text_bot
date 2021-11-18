@@ -2,27 +2,32 @@
 
 ini_reader::ini_reader(const std::string& ini_file_name)
 {
-    boost::property_tree::ini_parser::read_ini(ini_file_name, pt_);
+    boost::property_tree::ptree pt;
+    boost::property_tree::ini_parser::read_ini(ini_file_name, pt);
 
-    const std::string http_section = "HTTP.";
-    request_settings_.host_ = pt_.get<std::string>(http_section + "host");
-    request_settings_.port_ = pt_.get<std::string>(http_section + "port");
-    request_settings_.version_ = pt_.get<int>(http_section + "version");
-
-    const std::string bot_section = "Bot.";
-    request_settings_.token_ = pt_.get<std::string>(bot_section + "token");
+    const std::string telegram_section = "Telegram.";
+    tg_req_params_.host_ = pt.get<std::string>(telegram_section + "host");
+    tg_req_params_.port_ = pt.get<std::string>(telegram_section + "port");
+    tg_req_params_.version_ = pt.get<int>(telegram_section + "version");
+    tg_req_params_.token_ = pt.get<std::string>(telegram_section + "token");
 
     const std::string configuration_section = "Configuration.";
-    processing_threads_count_ = pt_.get<int>(configuration_section + "processing_threads_count");
-    io_context_threads_count_ = pt_.get<int>(configuration_section + "io_context_threads_count");
+    config_.processing_threads_count_ = pt.get<int>(configuration_section + "processing_threads_count");
+    config_.io_context_threads_count_ = pt.get<int>(configuration_section + "io_context_threads_count");
+    config_.voice_messages_path_ = pt.get<std::string>(configuration_section + "voice_messages_path");
 
-    BOOST_LOG_TRIVIAL(info) << "configuration file was read:"
-                            << "\nhost = " << request_settings_.host_
-                            << "\nport = " << request_settings_.port_
-                            << "\nversion = " << request_settings_.version_
-                            << "\ntoken = " << request_settings_.token_
-                            << "\nprocessing_threads_count = " << processing_threads_count_
-                            << "\nio_context_threads_count = " << io_context_threads_count_;
+    const std::string google_section = "Google.";
+    google_req_params_.host_ = pt.get<std::string>(google_section + "host");
+    google_req_params_.port_ = pt.get<std::string>(google_section + "port");
+    google_req_params_.version_ = pt.get<int>(google_section + "version");
+    google_req_params_.key_ = pt.get<std::string>(google_section + "key");
+    google_req_params_.method_ = pt.get<std::string>(google_section + "method");
+    google_req_params_.service_account_key_path_ = pt.get<std::string>(google_section + "service_account_key_path");
+
+    BOOST_LOG_TRIVIAL(info) << "Configuration file was read:\n"
+                            << tg_req_params_
+                            << google_req_params_
+                            << config_;
 }
 
 ini_reader& ini_reader::instance()
@@ -31,17 +36,17 @@ ini_reader& ini_reader::instance()
     return ini_reader_instance;
 }
 
-int ini_reader::get_processing_threads_count() const noexcept
+config ini_reader::get_configuration() const
 {
-    return processing_threads_count_;
+    return config_;
 }
 
-int ini_reader::get_io_context_threads_count() const noexcept
+tg_req_params ini_reader::get_tg_req_params() const
 {
-    return io_context_threads_count_;
+    return tg_req_params_;
 }
 
-request_settings ini_reader::get_request_settings() const
+google_req_params ini_reader::get_google_req_params() const
 {
-    return request_settings_;
+    return google_req_params_;
 }

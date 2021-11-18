@@ -16,6 +16,7 @@ class threadsafe_queue
 public:
     // implement or delete ctors
     void push(const boost::json::array& arr);
+    void push(const boost::json::object& obj);
     boost::json::object wait_and_pop();
     void push_stop_obj();
 };

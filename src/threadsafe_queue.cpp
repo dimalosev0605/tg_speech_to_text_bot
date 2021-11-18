@@ -10,6 +10,13 @@ void threadsafe_queue::push(const boost::json::array& arr)
     cv_.notify_all();
 }
 
+void threadsafe_queue::push(const boost::json::object& obj)
+{
+    std::lock_guard<std::mutex> lock(m_);
+    q_.push(obj);
+    cv_.notify_all();
+}
+
 boost::json::object threadsafe_queue::wait_and_pop()
 {
     std::unique_lock<std::mutex> lock(m_);

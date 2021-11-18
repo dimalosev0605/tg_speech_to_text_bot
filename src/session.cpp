@@ -1,29 +1,42 @@
 #include "session.h"
 
-session::session(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context,
-                 const request_settings& request_settings, const std::string& method)
+session::session(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context, threadsafe_queue& queue,
+                 boost::beast::http::request<boost::beast::http::string_body> request,
+                 std::function<void (threadsafe_queue& queue, boost::beast::http::response<boost::beast::http::string_body>& response, boost::json::object chat_info)> callback,
+                 const boost::json::object& chat_info)
     : resolver_{io_context},
       stream_{io_context, ssl_context},
-      request_settings_{request_settings},
-      method_{method}
+      request_{request},
+      queue_{queue},
+      callback_{callback},
+      chat_info_{chat_info}
 {}
 
-void session::run()
+void session::run(service service)
 {
-    if(!SSL_set_tlsext_host_name(stream_.native_handle(), request_settings_.host_.c_str()))
+    std::string host;
+    std::string port;
+    switch (service) {
+    case service::google: {
+        host = ini_reader::instance().get_google_req_params().host_;
+        port = ini_reader::instance().get_google_req_params().port_;
+        break;
+    }
+    case service::telegram: {
+        host = ini_reader::instance().get_tg_req_params().host_;
+        port = ini_reader::instance().get_tg_req_params().port_;
+        break;
+    }
+    }
+
+    if(!SSL_set_tlsext_host_name(stream_.native_handle(), host.c_str()))
     {
         boost::beast::error_code ec{static_cast<int>(::ERR_get_error()), boost::asio::error::get_ssl_category()};
         BOOST_LOG_TRIVIAL(error) << ec.message() << std::endl;
         return;
     }
 
-    request_.version(request_settings_.version_);
-    request_.method(boost::beast::http::verb::get);
-    request_.target(get_target());
-    request_.set(boost::beast::http::field::host, request_settings_.host_);
-    request_.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
-
-    resolver_.async_resolve(request_settings_.host_.c_str(), request_settings_.port_.c_str(), boost::beast::bind_front_handler(&session::on_resolve, shared_from_this()));
+    resolver_.async_resolve(host.c_str(), port.c_str(), boost::beast::bind_front_handler(&session::on_resolve, shared_from_this()));
 }
 
 void session::on_resolve(boost::beast::error_code ec, boost::asio::ip::tcp::resolver::results_type results)
@@ -71,6 +84,11 @@ void session::on_read(boost::beast::error_code ec, std::size_t bytes_transferred
         BOOST_LOG_TRIVIAL(error) << ec.message() << std::endl;
         return;
     }
+
+    if(callback_) {
+        callback_(queue_, response_, chat_info_);
+    }
+
     stream_.async_shutdown(boost::beast::bind_front_handler(&session::on_shutdown, shared_from_this()));
 }
 
@@ -79,9 +97,4 @@ void session::on_shutdown(boost::beast::error_code ec)
     if(ec && ec != boost::asio::ssl::error::stream_truncated) {
         BOOST_LOG_TRIVIAL(error) << ec.message() << std::endl;
     }
-}
-
-std::string session::get_target() const
-{
-    return "/bot" + request_settings_.token_ + "/" + method_;
 }

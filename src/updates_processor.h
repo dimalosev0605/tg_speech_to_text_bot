@@ -11,9 +11,11 @@
 
 #include <thread>
 
-#include "threadsafe_queue.h"
 #include "session.h"
 #include "ini_reader.h"
+#include "callbacks.h"
+#include "gcloud_at_gen.h"
+#include "base64.h"
 
 class updates_processor
 {

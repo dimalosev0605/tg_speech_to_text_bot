@@ -19,7 +19,6 @@
 
 #include "threadsafe_queue.h"
 #include "updates_processor.h"
-#include "request_settings.h"
 
 class updates_receiver
 {
@@ -34,7 +33,6 @@ class updates_receiver
     std::unique_ptr<boost::beast::flat_buffer> buffer_;
 
     const std::string method_ = "getUpdates";
-    request_settings request_settings_;
     std::string target_;
 
     bool is_offset_ = false;
@@ -50,7 +48,7 @@ private:
     std::string get_target() const;
 
 public:
-    explicit updates_receiver(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context, const request_settings& request_settings);
+    explicit updates_receiver(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context);
 
     void run();
     void start_updates_processors(int processing_thread_count);
