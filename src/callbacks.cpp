@@ -47,8 +47,6 @@ void download_voice_from_tg(threadsafe_queue& queue, boost::beast::http::respons
 void google_recognize(threadsafe_queue& queue, boost::beast::http::response<boost::beast::http::string_body>& response, boost::json::object chat_info)
 {
     auto body = response.body();
-    BOOST_LOG_TRIVIAL(info) << "body =\n" << body;
-    BOOST_LOG_TRIVIAL(info) << "chat_info =\n" << chat_info;
     std::string transcript;
     auto body_obj = boost::json::parse(body).as_object();
     if(body_obj.contains("results")) {
@@ -68,6 +66,7 @@ void google_recognize(threadsafe_queue& queue, boost::beast::http::response<boos
     }
     chat_info["transcript"] = transcript;
     chat_info["action"] = static_cast<int>(actions::send_voice_transcript);
+    BOOST_LOG_TRIVIAL(info) << chat_info;
     queue.push(chat_info);
 }
 

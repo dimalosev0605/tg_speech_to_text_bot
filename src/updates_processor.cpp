@@ -45,8 +45,7 @@ void updates_processor::run()
                     request.method(boost::beast::http::verb::post);
                     request.set(boost::beast::http::field::host, google_req_params.host_);
                     request.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
-                    gcloud_at_gen at_gen;
-                    request.set(boost::beast::http::field::authorization, "Bearer " + at_gen.generate_access_token());
+                    request.set(boost::beast::http::field::authorization, "Bearer " + gcloud_at_gen::instance().generate_access_token());
                     request.set(boost::beast::http::field::content_type, "application/json");
                     request.set(boost::beast::http::field::accept, "application/json");
                     std::string target = google_req_params.method_ + "?key=" + google_req_params.key_;
