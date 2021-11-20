@@ -54,7 +54,10 @@ void updates_processor::run()
                     boost::json::object config_obj;
                     config_obj["languageCode"] = "ru-RU";
                     config_obj["encoding"] = "OGG_OPUS";
-                    config_obj["sampleRateHertz"] = 16000;
+                    sample_rate_extractor sample_rate_extractor;
+                    const std::string voice_message_path = update_obj["voice_message_path"].as_string().c_str();
+                    auto sample_rate = sample_rate_extractor.extract_sample_rate(voice_message_path);
+                    config_obj["sampleRateHertz"] = sample_rate;
 
                     boost::json::object audio_obj;
                     std::ifstream input(update_obj["voice_message_path"].as_string().c_str(), std::ios::binary);
@@ -81,6 +84,7 @@ void updates_processor::run()
                     request.set(boost::beast::http::field::host, tg_req_params.host_);
                     request.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
                     std::string text = update_obj["transcript"].as_string().c_str();
+                    std::replace(text.begin(), text.end(), ' ', '+');
                     auto chat_id = update_obj["chat_id"].as_int64();
                     auto reply_to_message_id = update_obj["reply_to_message_id"].as_int64();
                     std::string target = "/bot" + tg_req_params.token_ + "/sendMessage?chat_id=" + std::to_string(chat_id) + "&reply_to_message_id=" + std::to_string(reply_to_message_id) + "&text=" + text;
@@ -115,6 +119,7 @@ void updates_processor::process_message(boost::json::object& message)
             request.set(boost::beast::http::field::host, tg_req_params.host_);
             request.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
             std::string text = "sorry, voice message too long";
+            std::replace(text.begin(), text.end(), ' ', '+');
             std::string target = "/bot" + ini_reader::instance().get_tg_req_params().token_ + "/sendMessage?chat_id=" + std::to_string(id) + "&reply_to_message_id=" + std::to_string(message_id) + "&text=" + text;
             request.target(target);
             std::make_shared<session>(io_context_, ssl_context_, queue_, request)->run(service::telegram);
@@ -140,6 +145,7 @@ void updates_processor::process_message(boost::json::object& message)
         request.set(boost::beast::http::field::host, tg_req_params.host_);
         request.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
         std::string text = "I am speech to text translator";
+        std::replace(text.begin(), text.end(), ' ', '+');
         std::string target = "/bot" + ini_reader::instance().get_tg_req_params().token_ + "/sendMessage?chat_id=" + std::to_string(id) + "&reply_to_message_id=" + std::to_string(message_id) + "&text=" + text;
         request.target(target);
         std::make_shared<session>(io_context_, ssl_context_, queue_, request)->run(service::telegram);

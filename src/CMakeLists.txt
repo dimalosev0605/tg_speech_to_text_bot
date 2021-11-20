@@ -36,6 +36,6 @@ endif()
 
 set(NO_SAN ON)
 if(NO_SAN)
-    add_executable(echo_bot main.cpp updates_receiver.h updates_receiver.cpp logger.h logger.cpp ini_reader.h ini_reader.cpp threadsafe_queue.h threadsafe_queue.cpp updates_processor.h updates_processor.cpp session.h session.cpp settings_structs.h settings_structs.cpp callbacks.h callbacks.cpp gcloud_at_gen.h gcloud_at_gen.cpp base64.h)
+    add_executable(echo_bot main.cpp updates_receiver.h updates_receiver.cpp logger.h logger.cpp ini_reader.h ini_reader.cpp threadsafe_queue.h threadsafe_queue.cpp updates_processor.h updates_processor.cpp session.h session.cpp settings_structs.h settings_structs.cpp callbacks.h callbacks.cpp gcloud_at_gen.h gcloud_at_gen.cpp base64.h sample_rate_extractor.h sample_rate_extractor.cpp)
     target_link_libraries(echo_bot "-lcrypto" "-lssl" ${Boost_LOG_SETUP_LIBRARY} ${Boost_LOG_LIBRARY})
 endif()
