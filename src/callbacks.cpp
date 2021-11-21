@@ -62,11 +62,11 @@ void google_recognize(threadsafe_queue& queue, boost::beast::http::response<boos
     }
 
     if(transcript.empty()) {
-        transcript = "not recognized";
+        transcript = "Not recognized.";
     }
     chat_info["transcript"] = transcript;
     chat_info["action"] = static_cast<int>(actions::send_voice_transcript);
-    BOOST_LOG_TRIVIAL(info) << chat_info;
+    BOOST_LOG_TRIVIAL(info) << "processed voice message:\n" << chat_info;
     queue.push(chat_info);
 }
 

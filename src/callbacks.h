@@ -12,7 +12,6 @@
 
 enum class actions : int
 {
-    prepare_voice_downloading_from_tg,
     download_voice_from_tg,
     google_recognize,
     send_voice_transcript,

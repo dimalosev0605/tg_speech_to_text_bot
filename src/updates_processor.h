@@ -27,7 +27,13 @@ class updates_processor
     std::unique_ptr<std::thread> thread_;
 
 private:
-    void process_message(boost::json::object& message);
+    void process_message(boost::json::object& update_obj);
+    void process_action(boost::json::object& action_obj);
+
+    boost::beast::http::request<boost::beast::http::string_body> get_send_tg_message_req(std::int64_t chat_id, std::int64_t reply_to_message_id, std::string text);
+    boost::beast::http::request<boost::beast::http::string_body> get_prepare_voice_downloading_from_tg_req(const std::string& file_id);
+    boost::beast::http::request<boost::beast::http::string_body> get_download_voice_from_tg_req(const std::string& target);
+    boost::beast::http::request<boost::beast::http::string_body> get_google_recognize_req(const std::string& voice_message_path);
 
 public:
     explicit updates_processor(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context, threadsafe_queue& queue);
