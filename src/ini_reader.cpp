@@ -23,6 +23,7 @@ ini_reader::ini_reader(const std::string& ini_file_name)
     google_req_params_.key_ = pt.get<std::string>(google_section + "key");
     google_req_params_.method_ = pt.get<std::string>(google_section + "method");
     google_req_params_.service_account_key_path_ = pt.get<std::string>(google_section + "service_account_key_path");
+    google_req_params_.access_token_generation_interval_ = pt.get<int>(google_section + "access_token_generation_interval");
 
     BOOST_LOG_TRIVIAL(info) << "Configuration file was read:\n"
                             << tg_req_params_

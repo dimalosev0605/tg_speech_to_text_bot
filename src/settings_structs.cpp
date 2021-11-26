@@ -14,12 +14,13 @@ std::ostream& operator<<(std::ostream& os, const tg_req_params& obj)
 std::ostream& operator<<(std::ostream& os, const google_req_params& obj)
 {
     os << "Google:"
-    << "\ngoogle_host = " << obj.host_
-    << "\ngoogle_port = " << obj.port_
-    << "\ngoogle_version = " << obj.version_
-    << "\ngoogle_key = " << obj.key_
-    << "\ngoogle_method = " << obj.method_
+    << "\nhost = " << obj.host_
+    << "\nport = " << obj.port_
+    << "\nversion = " << obj.version_
+    << "\nkey = " << obj.key_
+    << "\nmethod = " << obj.method_
     << "\nservice_account_key_path = " << obj.service_account_key_path_
+    << "\naccess_token_generation_interval = " << obj.access_token_generation_interval_
     << "\n";
     return os;
 }

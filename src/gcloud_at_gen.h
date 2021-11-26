@@ -9,10 +9,11 @@ class gcloud_at_gen
 {
     std::mutex m_;
     std::string access_token_;
-    std::chrono::system_clock::time_point prev_gen_time;
+    std::chrono::system_clock::time_point prev_gen_time_;
+    const int access_token_generation_interval_;
 
 private:
-    gcloud_at_gen() = default;
+    gcloud_at_gen();
 
 public:
     static gcloud_at_gen& instance();

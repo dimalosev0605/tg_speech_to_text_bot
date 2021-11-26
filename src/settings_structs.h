@@ -20,6 +20,7 @@ struct google_req_params
     std::string method_;
     std::string key_;
     std::string service_account_key_path_;
+    int access_token_generation_interval_;
 };
 
 struct config
