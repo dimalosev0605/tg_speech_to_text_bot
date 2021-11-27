@@ -6,7 +6,6 @@ target_link_libraries(sample_rate_extractor_tests
     PRIVATE
     external_program_callers
     ini_reader
-    ${Boost_LOG_LIBRARY}
     Boost::unit_test_framework
 )
 

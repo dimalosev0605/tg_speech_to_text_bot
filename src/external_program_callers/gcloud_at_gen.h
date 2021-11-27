@@ -13,7 +13,7 @@ class gcloud_at_gen
     const int access_token_generation_interval_;
 
 private:
-    gcloud_at_gen();
+    explicit gcloud_at_gen();
 
 public:
     static gcloud_at_gen& instance();
