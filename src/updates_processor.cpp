@@ -141,8 +141,7 @@ boost::beast::http::request<boost::beast::http::string_body> updates_processor::
     boost::json::object config_obj;
     config_obj["languageCode"] = "ru-RU";
     config_obj["encoding"] = "OGG_OPUS";
-    sample_rate_extractor sample_rate_extractor;
-    auto sample_rate = sample_rate_extractor.extract_sample_rate(voice_message_path);
+    auto sample_rate = sample_rate_extractor::instanse().extract_sample_rate(voice_message_path);
     config_obj["sampleRateHertz"] = sample_rate;
 
     boost::json::object audio_obj;

@@ -1,5 +1,11 @@
 #include "sample_rate_extractor.h"
 
+sample_rate_extractor& sample_rate_extractor::instanse()
+{
+    static sample_rate_extractor sample_rate_extractor_instanse;
+    return sample_rate_extractor_instanse;
+}
+
 int sample_rate_extractor::extract_sample_rate(const std::string& file_path)
 {
     const std::string command = "mediainfo --Output=JSON " + file_path;
