@@ -1,6 +1,8 @@
 #ifndef BASE64_H
 #define BASE64_H
 
+// This file copied from https://github.com/tkislan/base64.
+
 #include <string>
 
 const char base64_alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"

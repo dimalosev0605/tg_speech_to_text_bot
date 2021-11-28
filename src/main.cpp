@@ -2,11 +2,11 @@
 
 #include <boost/asio/signal_set.hpp>
 
-#include "updates_receiver.h"
-#include "logger.h"
-#include "ini_reader.h"
+#include "bot/updates_receiver.h"
+#include "bot/logger.h"
+#include "ini_reader/ini_reader.h"
 
-int main(int argc, char** argv)
+int main([[maybe_unused]]int argc, [[maybe_unused]]char** argv)
 {
     init_log();
     BOOST_LOG_TRIVIAL(info) << "launch";
@@ -26,7 +26,6 @@ int main(int argc, char** argv)
     });
 
     auto work = boost::asio::require(io_context.get_executor(), boost::asio::execution::outstanding_work.tracked);
-//    boost::asio::io_context::basic_executor_type<std::allocator<void>, 4> work = boost::asio::require(io_context.get_executor(), boost::asio::execution::outstanding_work.tracked);
 
     std::vector<std::thread> io_context_threads;
     io_context_threads.reserve(ini_reader::instance().get_configuration().io_context_threads_count_);
@@ -40,6 +39,6 @@ int main(int argc, char** argv)
         io_context_threads[i].join();
     }
 
-    BOOST_LOG_TRIVIAL(info) << "exit success";
+    BOOST_LOG_TRIVIAL(info) << "successful exit";
     return 0;
 }
