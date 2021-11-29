@@ -18,3 +18,5 @@ target_link_libraries(bot
     ${Boost_LOG_SETUP_LIBRARY}
     "-lcrypto"
     "-lssl")
+
+add_subdirectory(tests)
