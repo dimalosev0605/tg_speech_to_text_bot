@@ -37,6 +37,13 @@ private:
 
 public:
     explicit updates_processor(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context, threadsafe_queue& queue);
+
+    updates_processor(const updates_processor&) = delete;
+    updates_processor& operator=(const updates_processor&) = delete;
+
+    updates_processor(updates_processor&&) = delete;
+    updates_processor& operator=(updates_processor&&) = delete;
+
     void run();
     ~updates_processor();
 };

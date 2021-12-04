@@ -50,6 +50,12 @@ private:
 public:
     explicit updates_receiver(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context);
 
+    updates_receiver(const updates_receiver&) = delete;
+    updates_receiver& operator=(const updates_receiver&) = delete;
+
+    updates_receiver(updates_receiver&&) = delete;
+    updates_receiver& operator=(updates_receiver&&) = delete;
+
     void run();
     void start_updates_processors(int processing_thread_count);
 
