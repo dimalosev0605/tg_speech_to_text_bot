@@ -31,6 +31,7 @@ std::ostream& operator<<(std::ostream& os, const config& obj)
     << "\nprocessing_threads_count = " << obj.processing_threads_count_
     << "\nio_context_threads_count = " << obj.io_context_threads_count_
     << "\nvoice_messages_path = " << obj.voice_messages_path_
+    << "\nca_certificates_file = " << obj.ca_certificates_file_
     << "\n";
     return os;
 }

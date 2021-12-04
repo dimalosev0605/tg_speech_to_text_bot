@@ -15,6 +15,7 @@ ini_reader::ini_reader(const std::string& ini_file_name)
     config_.processing_threads_count_ = pt.get<int>(configuration_section + "processing_threads_count");
     config_.io_context_threads_count_ = pt.get<int>(configuration_section + "io_context_threads_count");
     config_.voice_messages_path_ = pt.get<std::string>(configuration_section + "voice_messages_path");
+    config_.ca_certificates_file_ = pt.get<std::string>(configuration_section + "ca_certificates_file");
 
     const std::string google_section = "Google.";
     google_req_params_.host_ = pt.get<std::string>(google_section + "host");

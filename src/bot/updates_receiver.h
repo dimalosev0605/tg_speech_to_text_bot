@@ -65,11 +65,5 @@ public:
     void on_write(boost::beast::error_code ec, std::size_t bytes_transferred);
     void on_read(boost::beast::error_code ec, std::size_t bytes_transferred);
 };
-// net::make_strand in my_first_bot_async/main.cpp
-// Are ssl_context and io_context are thread safe?
-// bind_front_handler params passing
-// callbacks params passing
-// add logger
-// analyze stack call
 
 #endif // UPDATES_RECEIVER_H

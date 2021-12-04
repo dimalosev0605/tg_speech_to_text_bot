@@ -1,4 +1,5 @@
 #include "threadsafe_queue.h"
+#include <thread>
 
 #define BOOST_TEST_MODULE threadsafe_queue_tests
 #include <boost/test/unit_test.hpp>

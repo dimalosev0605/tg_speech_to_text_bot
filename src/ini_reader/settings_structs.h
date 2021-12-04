@@ -28,6 +28,7 @@ struct config
     std::string voice_messages_path_;
     int processing_threads_count_;
     int io_context_threads_count_;
+    std::string ca_certificates_file_;
 };
 
 std::ostream& operator<<(std::ostream& os, const tg_req_params& obj);
