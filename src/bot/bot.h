@@ -3,6 +3,7 @@
 
 #include "updates_receiver.h"
 #include "updates_processor.h"
+#include "enabled_users.h"
 
 class bot
 {
@@ -16,6 +17,7 @@ class bot
     boost::asio::signal_set signals_;
 
     threadsafe_queue queue_;
+    enabled_users enabled_users_;
     updates_receiver updates_receiver_;
     std::vector<std::unique_ptr<updates_processor>> updates_processors_;
 

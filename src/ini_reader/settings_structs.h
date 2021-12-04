@@ -29,6 +29,7 @@ struct config
     int processing_threads_count_;
     int io_context_threads_count_;
     std::string ca_certificates_file_;
+    int enabled_users_read_interval_;
 };
 
 std::ostream& operator<<(std::ostream& os, const tg_req_params& obj);

@@ -17,12 +17,14 @@
 #include "gcloud_at_gen.h"
 #include "sample_rate_extractor.h"
 #include "base64.h"
+#include "enabled_users.h"
 
 class updates_processor
 {
     boost::asio::io_context& io_context_;
     boost::asio::ssl::context& ssl_context_;
     threadsafe_queue& queue_;
+    enabled_users& enabled_users_;
 
     std::unique_ptr<std::thread> thread_;
 
@@ -36,7 +38,7 @@ private:
     boost::beast::http::request<boost::beast::http::string_body> get_google_recognize_req(const std::string& voice_message_path);
 
 public:
-    explicit updates_processor(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context, threadsafe_queue& queue);
+    explicit updates_processor(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context, threadsafe_queue& queue, enabled_users& enabled_users);
 
     updates_processor(const updates_processor&) = delete;
     updates_processor& operator=(const updates_processor&) = delete;

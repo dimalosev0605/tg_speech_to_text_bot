@@ -24,7 +24,7 @@ void bot::start()
 {
     updates_processors_.reserve(config_.processing_threads_count_);
     for(int i = 0; i < config_.processing_threads_count_; ++i) {
-        updates_processors_.push_back(std::make_unique<updates_processor>(io_context_, ssl_context_, queue_));
+        updates_processors_.push_back(std::make_unique<updates_processor>(io_context_, ssl_context_, queue_, enabled_users_));
         updates_processors_[i]->run();
     }
     updates_receiver_.run();
