@@ -18,16 +18,16 @@
 #include <boost/json.hpp>
 
 #include "threadsafe_queue.h"
-#include "updates_processor.h"
+#include "ini_reader.h"
 
 class updates_receiver
 {
     boost::asio::io_context& io_context_;
     boost::asio::ssl::context& ssl_context_;
+    threadsafe_queue& queue_;
 
     std::unique_ptr<boost::asio::ip::tcp::resolver> resolver_;
     std::unique_ptr<boost::beast::ssl_stream<boost::beast::tcp_stream>> stream_;
-
     std::unique_ptr<boost::beast::http::request<boost::beast::http::empty_body>> request_;
     std::unique_ptr<boost::beast::http::response<boost::beast::http::string_body>> response_;
     std::unique_ptr<boost::beast::flat_buffer> buffer_;
@@ -38,17 +38,20 @@ class updates_receiver
     bool is_offset_ = false;
     std::int64_t offset_;
 
-    threadsafe_queue queue_;
-    std::vector<std::unique_ptr<updates_processor>> updates_processors_;
-
 private:
     void reset();
     int calculate_offset(boost::json::array& updates);
     std::string get_method() const;
     std::string get_target() const;
 
+    void on_resolve(boost::beast::error_code ec, boost::asio::ip::tcp::resolver::results_type results);
+    void on_connect(boost::beast::error_code ec, boost::asio::ip::tcp::resolver::results_type::endpoint_type);
+    void on_handshake(boost::beast::error_code ec);
+    void on_write(boost::beast::error_code ec, std::size_t bytes_transferred);
+    void on_read(boost::beast::error_code ec, std::size_t bytes_transferred);
+
 public:
-    explicit updates_receiver(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context);
+    explicit updates_receiver(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context, threadsafe_queue& queue);
 
     updates_receiver(const updates_receiver&) = delete;
     updates_receiver& operator=(const updates_receiver&) = delete;
@@ -57,13 +60,7 @@ public:
     updates_receiver& operator=(updates_receiver&&) = delete;
 
     void run();
-    void start_updates_processors(int processing_thread_count);
 
-    void on_resolve(boost::beast::error_code ec, boost::asio::ip::tcp::resolver::results_type results);
-    void on_connect(boost::beast::error_code ec, boost::asio::ip::tcp::resolver::results_type::endpoint_type);
-    void on_handshake(boost::beast::error_code ec);
-    void on_write(boost::beast::error_code ec, std::size_t bytes_transferred);
-    void on_read(boost::beast::error_code ec, std::size_t bytes_transferred);
 };
 
 #endif // UPDATES_RECEIVER_H

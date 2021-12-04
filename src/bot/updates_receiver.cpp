@@ -2,9 +2,10 @@
 
 #include <boost/json/src.hpp>
 
-updates_receiver::updates_receiver(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context)
+updates_receiver::updates_receiver(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context, threadsafe_queue& queue)
     : io_context_{io_context},
       ssl_context_{ssl_context},
+      queue_{queue},
       resolver_{std::make_unique<boost::asio::ip::tcp::resolver>(io_context)},
       stream_{std::make_unique<boost::beast::ssl_stream<boost::beast::tcp_stream>>(io_context, ssl_context)},
       request_{std::make_unique<boost::beast::http::request<boost::beast::http::empty_body>>()},
@@ -47,15 +48,6 @@ std::string updates_receiver::get_method() const
 std::string updates_receiver::get_target() const
 {
     return "/bot" + ini_reader::instance().get_tg_req_params().token_ + "/" + get_method();
-}
-
-void updates_receiver::start_updates_processors(int processing_thread_count)
-{
-    updates_processors_.reserve(processing_thread_count);
-    for(int i = 0; i < processing_thread_count; ++i) {
-        updates_processors_.push_back(std::make_unique<updates_processor>(io_context_, ssl_context_, queue_));
-        updates_processors_[i]->run();
-    }
 }
 
 void updates_receiver::run()
