@@ -1,5 +1,3 @@
-#include "/home/dmitry/boost_1_77_0/libs/beast/example/common/root_certificates.hpp"
-
 #include <boost/asio/signal_set.hpp>
 
 #include "bot/updates_receiver.h"
@@ -13,8 +11,8 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char** argv)
 
     boost::asio::io_context io_context{ini_reader::instance().get_configuration().io_context_threads_count_};
     boost::asio::ssl::context ssl_context{boost::asio::ssl::context::tlsv12_client};
-    load_root_certificates(ssl_context);
     ssl_context.set_verify_mode(boost::asio::ssl::verify_peer);
+    ssl_context.load_verify_file("***REMOVED***");
 
     updates_receiver updates_receiver{io_context, ssl_context};
     updates_receiver.start_updates_processors(ini_reader::instance().get_configuration().processing_threads_count_);
