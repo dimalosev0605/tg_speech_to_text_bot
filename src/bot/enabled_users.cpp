@@ -2,7 +2,7 @@
 
 boost::json::value enabled_users::read_file() const
 {
-    std::ifstream is("enabled_users.json");
+    std::ifstream is(enabled_users_file_path_);
     boost::json::stream_parser p;
     std::string line;
     while(std::getline(is, line)) {
@@ -28,8 +28,9 @@ void enabled_users::fill_enabled_users()
     }
 }
 
-enabled_users::enabled_users()
-    : enabled_users_read_interval_(ini_reader::instance().get_configuration().enabled_users_read_interval_)
+enabled_users::enabled_users(const std::string& enabled_users_file_path)
+    : enabled_users_read_interval_{ini_reader::instance().get_configuration().enabled_users_read_interval_},
+      enabled_users_file_path_{enabled_users_file_path}
 {
     fill_enabled_users();
 }

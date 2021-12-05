@@ -51,12 +51,16 @@ BOOST_AUTO_TEST_CASE(configuration) {
     std::string voice_messages_path;
     int processing_threads_count;
     int io_context_threads_count;
+    std::string ca_certificates_file;
+    int enabled_users_read_interval;
 
     bool is_ok = true;
 
     is_ok = std::is_same_v<decltype(voice_messages_path), decltype(configuration.voice_messages_path_)> && is_ok;
     is_ok = std::is_same_v<decltype(processing_threads_count), decltype(configuration.processing_threads_count_)> && is_ok;
     is_ok = std::is_same_v<decltype(io_context_threads_count), decltype(configuration.io_context_threads_count_)> && is_ok;
+    is_ok = std::is_same_v<decltype(ca_certificates_file), decltype(configuration.ca_certificates_file_)> && is_ok;
+    is_ok = std::is_same_v<decltype(enabled_users_read_interval), decltype(configuration.enabled_users_read_interval_)> && is_ok;
 
     BOOST_REQUIRE(is_ok);
 }
