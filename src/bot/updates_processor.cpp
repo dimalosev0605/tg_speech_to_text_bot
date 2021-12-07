@@ -11,29 +11,31 @@ void updates_processor::run()
 {
     thread_ = std::make_unique<std::thread>([this]{
         while(true) {
-            auto update_obj = queue_.wait_and_pop();
-            if(update_obj.contains("stop")) {
-                if(update_obj["stop"].as_bool()){
-                    queue_.push_stop_obj();
-                    break;
-                }
-            }
-            if(update_obj.contains("message")) {
-                BOOST_LOG_TRIVIAL(info) << "update_obj:\n" << update_obj;
-                process_message(update_obj);
-            } else if(update_obj.contains("action")) {
-                process_action(update_obj);
+            auto obj = queue_.wait_and_pop();
+            if(obj.contains("stop")) {
+                break;
+            } else if(obj.contains("message")) {
+                process_message(obj);
+            } else if(obj.contains("action")) {
+                process_action(obj);
             }
         }
     });
 }
 
-void updates_processor::process_message(boost::json::object& update_obj)
+void updates_processor::process_message(boost::json::object& message_obj)
 {
-    auto message = update_obj["message"].as_object();
+    BOOST_LOG_TRIVIAL(info) << "process_message:\n" << message_obj;
+    auto message = message_obj["message"].as_object();
+    auto from = message["from"].as_object();
+    auto from_id = from["id"].as_int64();
+    boost::json::string username;
+    if(from.contains("username")) {
+        username = from["username"].as_string();
+    }
     auto chat = message["chat"].as_object();
-    auto id = chat["id"].as_int64();
-    auto username = chat["username"].as_string();
+    auto chat_id = chat["id"].as_int64();
+    std::string type = chat["type"].as_string().c_str();
     auto date = message["date"].as_int64();
     auto message_id = message["message_id"].as_int64();
 
@@ -42,24 +44,26 @@ void updates_processor::process_message(boost::json::object& update_obj)
             auto voice =  message["voice"].as_object();
             auto duration = voice["duration"].as_int64();
             if(duration > 60) {
-                auto request = get_send_tg_message_req(id, message_id, "Sorry, voice message too long. I can handle only voice messages with duration less than 60 seconds.");
+                auto request = get_send_tg_message_req(chat_id, message_id, "Sorry, voice message too long. I can handle only voice messages with duration less than 60 seconds.");
                 std::make_shared<session>(io_context_, ssl_context_, queue_, request)->run(service::telegram);
             } else {
                 auto file_id = voice["file_id"].as_string().c_str();
                 auto request = get_prepare_voice_downloading_from_tg_req(file_id);
                 boost::json::object chat_info;
-                chat_info["chat_id"] = id;
+                chat_info["chat_id"] = chat_id;
                 chat_info["reply_to_message_id"] = message_id;
-                chat_info["username"] = username;
+                chat_info["username"] = std::string{username.c_str()} + "_" + std::to_string(from_id);
                 chat_info["date"] = date;
                 std::make_shared<session>(io_context_, ssl_context_, queue_, request, prepare_voice_downloading_from_tg, chat_info)->run(service::telegram);
             }
         } else {
-            auto request = get_send_tg_message_req(id, message_id, "I am speech to text translator. I can handle only voice messages.");
+            if(type != "private") return;
+            auto request = get_send_tg_message_req(chat_id, message_id, "I am speech to text translator. I can handle only voice messages.");
             std::make_shared<session>(io_context_, ssl_context_, queue_, request)->run(service::telegram);
         }
     } else {
-        auto request = get_send_tg_message_req(id, message_id, "Ti kto?");
+        if(type != "private") return;
+        auto request = get_send_tg_message_req(chat_id, message_id, "Ti kto?");
         std::make_shared<session>(io_context_, ssl_context_, queue_, request)->run(service::telegram);
     }
 }

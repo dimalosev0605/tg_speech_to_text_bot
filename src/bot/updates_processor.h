@@ -29,7 +29,7 @@ class updates_processor
     std::unique_ptr<std::thread> thread_;
 
 private:
-    void process_message(boost::json::object& update_obj);
+    void process_message(boost::json::object& message_obj);
     void process_action(boost::json::object& action_obj);
 
     boost::beast::http::request<boost::beast::http::string_body> get_send_tg_message_req(std::int64_t chat_id, std::int64_t reply_to_message_id, std::string text);
