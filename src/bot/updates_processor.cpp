@@ -35,12 +35,11 @@ void updates_processor::process_message(boost::json::object& message_obj)
     }
     auto chat = message["chat"].as_object();
     auto chat_id = chat["id"].as_int64();
-    std::string type = chat["type"].as_string().c_str();
     auto date = message["date"].as_int64();
     auto message_id = message["message_id"].as_int64();
 
-    if(enabled_users_.contains(std::string{username.c_str()})) {
-        if(message.contains("voice")) {
+    if(message.contains("voice")) {
+        if(enabled_users_.contains(std::string{username.c_str()})) {
             auto voice =  message["voice"].as_object();
             auto duration = voice["duration"].as_int64();
             if(duration > 60) {
@@ -56,15 +55,7 @@ void updates_processor::process_message(boost::json::object& message_obj)
                 chat_info["date"] = date;
                 std::make_shared<session>(io_context_, ssl_context_, queue_, request, prepare_voice_downloading_from_tg, chat_info)->run(service::telegram);
             }
-        } else {
-            if(type != "private") return;
-            auto request = get_send_tg_message_req(chat_id, message_id, "I am speech to text translator. I can handle only voice messages.");
-            std::make_shared<session>(io_context_, ssl_context_, queue_, request)->run(service::telegram);
         }
-    } else {
-        if(type != "private") return;
-        auto request = get_send_tg_message_req(chat_id, message_id, "Ti kto?");
-        std::make_shared<session>(io_context_, ssl_context_, queue_, request)->run(service::telegram);
     }
 }
 

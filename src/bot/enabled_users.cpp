@@ -14,10 +14,10 @@ boost::json::value enabled_users::read_file() const
 
 void enabled_users::fill_enabled_users()
 {
-    enabled_users_.clear();
     auto json = read_file().as_object();
-    auto use_enabled_users = json["use_enabled_users"].as_bool();
-    if(use_enabled_users) {
+    use_enabled_users_ = json["use_enabled_users"].as_bool();
+    if(use_enabled_users_) {
+        enabled_users_.clear();
         auto users = json["users"].as_array();
         for(const auto& elem : users) {
             auto user = elem.as_object();
@@ -46,9 +46,9 @@ bool enabled_users::contains(std::string user)
         fill_enabled_users();
     }
 
-    if(enabled_users_.empty()) {
-        return true;
-    } else {
+    if(use_enabled_users_) {
         return enabled_users_.contains(user);
+    } else {
+        return true;
     }
 }

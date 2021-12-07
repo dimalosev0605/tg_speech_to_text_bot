@@ -19,6 +19,7 @@ class enabled_users
     std::chrono::system_clock::time_point prev_enabled_users_read_time_;
     const int enabled_users_read_interval_;
     const std::string enabled_users_file_path_;
+    bool use_enabled_users_;
 
 private:
     boost::json::value read_file() const;
