@@ -11,6 +11,7 @@ BOOST_AUTO_TEST_CASE(telegram) {
     std::string port;
     int version;
     std::string token;
+    std::string bot_name;
 
     bool is_ok = true;
 
@@ -18,6 +19,7 @@ BOOST_AUTO_TEST_CASE(telegram) {
     is_ok = std::is_same_v<decltype(port), decltype(tg_req_params.port_)> && is_ok;
     is_ok = std::is_same_v<decltype(version), decltype(tg_req_params.version_)> && is_ok;
     is_ok = std::is_same_v<decltype(token), decltype(tg_req_params.token_)> && is_ok;
+    is_ok = std::is_same_v<decltype(bot_name), decltype(tg_req_params.bot_name_)> && is_ok;
 
     BOOST_REQUIRE(is_ok);
 }

@@ -10,6 +10,7 @@ ini_reader::ini_reader(const std::string& ini_file_name)
     tg_req_params_.port_ = pt.get<std::string>(telegram_section + "port");
     tg_req_params_.version_ = pt.get<int>(telegram_section + "version");
     tg_req_params_.token_ = pt.get<std::string>(telegram_section + "token");
+    tg_req_params_.bot_name_ = pt.get<std::string>(telegram_section + "bot_name");
 
     const std::string configuration_section = "Configuration.";
     config_.processing_threads_count_ = pt.get<int>(configuration_section + "processing_threads_count");

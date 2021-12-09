@@ -10,6 +10,7 @@ struct tg_req_params
     std::string port_;
     int version_;
     std::string token_;
+    std::string bot_name_;
 };
 
 struct google_req_params

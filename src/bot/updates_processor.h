@@ -16,8 +16,9 @@
 #include "callbacks.h"
 #include "gcloud_at_gen.h"
 #include "sample_rate_extractor.h"
-#include "base64.h"
 #include "enabled_users.h"
+#include "chats_settings.h"
+#include "bot_commands_processor.h"
 
 class updates_processor
 {
@@ -25,17 +26,21 @@ class updates_processor
     boost::asio::ssl::context& ssl_context_;
     threadsafe_queue& queue_;
     enabled_users& enabled_users_;
+    chats_settings chats_settings_;
+    bot_commands_processor bot_commands_processor_;
 
     std::unique_ptr<std::thread> thread_;
 
 private:
     void process_message(boost::json::object& message_obj);
     void process_action(boost::json::object& action_obj);
+    void process_callback_query(boost::json::object& callback_query_obj);
+    void process_voice_message(boost::json::object& voice_message_obj);
+    void process_bot_command(boost::json::object& message_obj);
 
-    boost::beast::http::request<boost::beast::http::string_body> get_send_tg_message_req(std::int64_t chat_id, std::int64_t reply_to_message_id, std::string text);
-    boost::beast::http::request<boost::beast::http::string_body> get_prepare_voice_downloading_from_tg_req(const std::string& file_id);
+    boost::beast::http::request<boost::beast::http::string_body> get_tg_req(const std::string& method, boost::json::object& params);
     boost::beast::http::request<boost::beast::http::string_body> get_download_voice_from_tg_req(const std::string& target);
-    boost::beast::http::request<boost::beast::http::string_body> get_google_recognize_req(const std::string& voice_message_path);
+    boost::beast::http::request<boost::beast::http::string_body> get_google_recognize_req(const std::string& voice_message_path, std::int64_t chat_id, std::int64_t user_id);
 
 public:
     explicit updates_processor(boost::asio::io_context& io_context, boost::asio::ssl::context& ssl_context, threadsafe_queue& queue, enabled_users& enabled_users);

@@ -62,7 +62,7 @@ void google_recognize(threadsafe_queue& queue, boost::beast::http::response<boos
     }
 
     if(transcript.empty()) {
-        transcript = "Not recognized.";
+        transcript = "Not recognized. Check the installed language via /language command.";
     }
     chat_info["transcript"] = transcript;
     chat_info["action"] = static_cast<int>(actions::send_voice_transcript);
