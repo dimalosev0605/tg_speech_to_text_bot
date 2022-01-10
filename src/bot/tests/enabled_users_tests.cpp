@@ -15,7 +15,7 @@ BOOST_AUTO_TEST_CASE(not_use_enabled_users) {
 
 BOOST_AUTO_TEST_CASE(use_enabled_users_check_only_enabled) {
     enabled_users eu("use_enabled_users.json");
-    std::vector<std::string> names = {"***REMOVED***", "Jim_keller"};
+    std::vector<std::string> names = {"valera_Valakas", "Jim_keller"};
     bool flag = true;
     for(const auto& name : names) {
         flag = flag && eu.contains(name);
