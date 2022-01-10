@@ -7,7 +7,7 @@ std::ostream& operator<<(std::ostream& os, const tg_req_params& obj)
     << "\nport = " << obj.port_
     << "\nversion = " << obj.version_
     << "\ntoken = " << obj.token_
-    << "\nbot_name_ = " << obj.bot_name_
+    << "\nbot_name = " << obj.bot_name_
     << "\n";
     return os;
 }
